@@ -29,6 +29,9 @@ async function OnLoadVideo(socket,data) {
     if(!roomID) return
     const room = RoomManager.findRoomByID(roomID)
     if(room) {
+        room.broadcastEventToUsersExcept([socket], {
+            type: "pre-load"
+        })
         await setRoomVideoURL(room)
         room.broadcastEventToUsers({
             type: "load-video",
