@@ -82,7 +82,7 @@ function initializeEvents() {
 }
 
 
-server.listen(process.env.PORT, () => {
+server.listen(process.env.PORT || 3001, () => {
     console.log("SERVER IS RUNNING! on port: " + server.address().port)
     events = initializeEvents()
 })

@@ -1,8 +1,22 @@
 const RoomManager = require("../../classes/RoomManager.js")
 const axios = require("axios").default
 
+function extractVideoID(url) {
+    var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
+    var match = url.match(regExp);
+    if (match && match[7].length == 11) {
+      return match[7];
+    } else {
+      alert('Could not extract video ID.');
+    }
+  }
+
+
 async function setRoomVideoURL(room) {
     const inputURL = room.getVideoData().getInputURL()
+    if(inputURL === room.getVideoData().getCurrentlyLoaded()) {
+        return -1
+    }
     if(inputURL.startsWith("https://animixplay.to/v1/")) {
         let parts = inputURL.split("/")
         if(!parts.at(-1).includes("ep")) parts.push("ep1")
@@ -20,7 +34,12 @@ async function setRoomVideoURL(room) {
             totalEpisodes: info.data.animeInfo.total_episodes
         }
         room.getVideoData().setPlayerURL(videoURL)
-        room.getVideoData().setAnimeData(animeData)
+        room.getVideoData().setAdditionalInfo(animeData)
+        return 1
+    }
+    if(inputURL.startsWith("https://www.youtube.com/watch") || inputURL.startsWith("https://youtu.be/")) {
+        room.getVideoData().setPlayerURL(extractVideoID(inputURL))
+        return 1
     }
 }
 
@@ -32,11 +51,14 @@ async function OnLoadVideo(socket,data) {
         room.broadcastEventToUsersExcept([socket], {
             type: "pre-load"
         })
-        await setRoomVideoURL(room)
-        room.broadcastEventToUsers({
-            type: "load-video",
-            videoData: room.getVideoData().toJSON()
-        })
+        const resp = await setRoomVideoURL(room)
+        if(resp == 1) {
+            room.broadcastEventToUsers({
+                type: "load-video",
+                videoData: room.getVideoData().toJSON()
+            })
+        }
+        
     }
 }
 

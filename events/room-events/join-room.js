@@ -32,6 +32,7 @@ async function OnJoinRoom(socket,data) {
         socket.emit("room-events", {
             type: "join-room",
             success: true,
+            owner: false,
             roomData: room.toJSON()
         })
         room.broadcastEventToUsersExcept([socket], {
@@ -46,6 +47,7 @@ async function OnJoinRoom(socket,data) {
         socket.emit("room-events", {
             type: "join-room",
             success: true,
+            owner: true,
             roomData: newRoom.toJSON()
         })
     }

@@ -5,9 +5,17 @@ class VideoData {
         this.inputURL = ""
         this.currentTimestamp = 0
         this.paused = true
-        this.animeData = null
+        this.additionalInfo = null
+        this.currentlyLoadedURL = ""
+    }
+    
+    setCurrentlyLoadedURL(newURL) {
+        this.currentlyLoadedURL = newURL
     }
 
+    getCurrentlyLoaded() {
+        return this.currentlyLoadedURL
+    }
 
     toJSON() {
         return {
@@ -15,7 +23,7 @@ class VideoData {
             inputURL: this.inputURL,
             currentTimestamp: this.currentTimestamp,
             paused: this.paused,
-            animeData: this.animeData
+            additionalInfo: this.additionalInfo
         }
     }
 
@@ -27,12 +35,12 @@ class VideoData {
         return this.inputURL
     }
 
-    setAnimeData(animeData) {
-        this.animeData = animeData
+    setAdditionalInfo(additionalInfo) {
+        this.additionalInfo = additionalInfo
     }
 
-    getAnimeData() {
-        return this.animeData
+    getAdditionalInfo() {
+        return this.additionalInfo
     }
 
     getCurrentTimestamp() {
