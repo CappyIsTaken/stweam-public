@@ -3,10 +3,21 @@ const Room = require("../../classes/Room.js")
 const User = require("../../classes/User.js")
 async function OnJoinRoom(socket,data) {
     const {roomID, username} = data
+
+    if(username === "") {
+        return socket.emit("room-events", {
+            type: "join-room",
+            success: false,
+            message: "Username can't be empty!"
+        })
+    }
+
     if(!roomID) {
         return
     }
     const room = RoomManager.findRoomByID(roomID)
+
+
     if(room) {
         if(room.userExists(username)) {
             socket.emit("room-events", {
